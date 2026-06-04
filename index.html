@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Likea's Happy Cow Farm (Easy & Chill Mode) 🐮</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Likea's Happy Cow Farm (iOS Touch Optimized) 🐮</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&family=Fredoka:wght@400;700&display=swap');
 
@@ -19,6 +19,9 @@
         * { 
             box-sizing: border-box; 
             font-family: 'Kantumruy Pro', sans-serif; 
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         body {
@@ -27,66 +30,62 @@
             background: linear-gradient(135deg, #e8f7ee 0%, #dff9fb 100%);
             height: 100vh;
             display: flex;
+            flex-direction: column;
             overflow: hidden;
             color: var(--text-dark);
         }
 
-        /* SIDEBAR INTERFACE */
+        /* SIDEBAR / TOP NAVIGATION FOR MOBILE */
         #sidebar {
-            width: 320px;
+            width: 100%;
             background: var(--panel-white);
-            border-right: 4px solid #fff;
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
-            flex-direction: column;
-            padding: 25px;
+            flex-direction: row;
+            overflow-x: auto;
+            padding: 10px;
+            gap: 8px;
             z-index: 10;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .brand { text-align: center; margin-bottom: 25px; }
+        .brand { 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            padding: 0 10px;
+            border-right: 2px solid #f1f2f6;
+            min-width: 120px;
+        }
         .brand h1 { 
             font-family: 'Fredoka', sans-serif;
-            font-size: 24px; 
+            font-size: 16px; 
             color: #2ed573; 
             margin: 0; 
         }
-        .brand span { font-size: 11px; color: #a4b0be; letter-spacing: 1px; text-transform: uppercase; }
+        .brand span { font-size: 9px; color: #a4b0be; letter-spacing: 0.5px; }
 
         .menu-btn {
             background: #fff;
             border: 2px solid #f1f2f6;
-            padding: 14px;
-            margin-bottom: 10px;
-            border-radius: 16px;
+            padding: 8px 12px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 12px;
             font-weight: 600;
             color: #57606f;
             display: flex;
             align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
+            gap: 6px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
         }
 
-        .menu-btn:hover { border-color: #2ed573; color: #2ed573; transform: translateX(5px); }
         .menu-btn.active {
             background: #2ed573;
             color: white;
             border-color: #2ed573;
-            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.3);
         }
-
-        /* SIDEBAR CHAT BOX */
-        #motivation-box {
-            margin-top: auto;
-            background: #f1fcf5;
-            border: 2px dashed #2ed573;
-            border-radius: 16px;
-            padding: 15px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        #motivation-box h3 { margin: 0 0 8px 0; color: #2ed573; font-size: 16px; }
 
         /* MAIN GAMING STAGE */
         #main-stage {
@@ -94,19 +93,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 10px;
             position: relative;
+            touch-action: none; /* Prevents iOS safari bouncing */
         }
 
         #game-card {
             background: var(--panel-white);
-            border-radius: 24px;
-            padding: 25px;
+            border-radius: 20px;
+            padding: 12px;
             box-shadow: var(--shadow);
-            border: 6px solid #fff;
+            border: 4px solid #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
+            width: 100%;
+            max-width: 460px;
         }
 
         .game-header {
@@ -114,35 +117,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         }
 
-        .game-title { font-size: 20px; font-weight: bold; color: #2c3e50; margin: 0; }
+        .game-title { font-size: 15px; font-weight: bold; color: #2c3e50; margin: 0; }
         .status-badge {
             background: #ffa502;
             color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
+            padding: 4px 10px;
+            border-radius: 12px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         canvas {
             background: #f7fcf9;
-            border-radius: 16px;
-            box-shadow: inset 0 4px 10px rgba(0,0,0,0.03);
-            cursor: pointer;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+            width: 100%;
+            height: auto;
+            max-height: 70vh;
+            touch-action: none;
         }
 
-        /* INTRO SCREEN & OVERLAY SYSTEM */
+        /* INTERFACE POPUPS FOR MOBILE TOUCH */
         .overlay-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -151,7 +157,7 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
             z-index: 20;
-            padding: 35px;
+            padding: 20px;
         }
 
         .overlay-screen.show { 
@@ -161,74 +167,69 @@
 
         .intro-title {
             font-family: 'Fredoka', sans-serif;
-            font-size: 28px;
+            font-size: 22px;
             color: #2ed573;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .intro-hi {
             background: #e8f7ee;
             color: #2ed573;
-            padding: 15px 20px;
-            border-radius: 16px;
+            padding: 12px 15px;
+            border-radius: 12px;
             border: 1px solid rgba(46, 213, 115, 0.3);
-            font-size: 15px;
+            font-size: 13px;
             font-weight: bold;
             text-align: center;
-            max-width: 85%;
-            line-height: 1.6;
-            margin-bottom: 25px;
+            max-width: 90%;
+            line-height: 1.5;
+            margin-bottom: 18px;
         }
 
         .message-content {
             background: #ff4757;
             color: #fff;
-            padding: 18px 25px;
-            border-radius: 16px;
-            border: 3px solid #fff;
-            font-size: 15px;
+            padding: 14px 20px;
+            border-radius: 14px;
+            border: 2px solid #fff;
+            font-size: 13px;
             font-weight: 700;
             text-align: center;
-            max-width: 85%;
-            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.2);
+            max-width: 90%;
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2);
             line-height: 1.5;
         }
 
-        .overlay-screen.win-style {
-            background: rgba(255, 255, 255, 0.95);
-        }
         .overlay-screen.win-style .message-content {
             background: #2ed573;
-            box-shadow: 0 8px 20px rgba(46, 213, 115, 0.2);
+            box-shadow: 0 4px 12px rgba(46, 213, 115, 0.2);
         }
 
         .start-btn {
             background: #2ed573;
             color: white;
             border: none;
-            padding: 14px 35px;
-            border-radius: 50px;
-            font-size: 16px;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
-            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
+            -webkit-appearance: none;
         }
-        .start-btn:hover { transform: scale(1.05); }
 
         .restart-btn {
-            margin-top: 20px;
+            margin-top: 15px;
             background: #2f3542;
             color: white;
             border: none;
-            padding: 10px 22px;
-            border-radius: 12px;
+            padding: 10px 20px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 13px;
-            transition: transform 0.2s;
+            font-size: 12px;
+            -webkit-appearance: none;
         }
-        .restart-btn:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -238,24 +239,10 @@
             <h1>COW FARM 🐮</h1>
             <span>For Likea 🌸</span>
         </div>
-
-        <div class="menu-btn active" onclick="switchGame(0, this)">
-            <span>🌾</span> ហ្គេមគោរត់រកស៊ីស្មៅ
-        </div>
-        <div class="menu-btn" onclick="switchGame(1, this)">
-            <span>🚜</span> ហ្គេមគោគេចត្រាក់ទ័រ
-        </div>
-        <div class="menu-btn" onclick="switchGame(2, this)">
-            <span>⛈️</span> ហ្គេមគោរត់រកជម្រកភ្លៀង
-        </div>
-        <div class="menu-btn" onclick="switchGame(3, this)">
-            <span>🍎</span> ហ្គេមប្រមូលផ្លែប៉ោមក្រហម
-        </div>
-
-        <div id="motivation-box">
-            <h3>💬 ស្ថានភាព៖</h3>
-            <div id="motivation-text">នាំកូនគោរស់ឱ្យបាន ២០ វិនាទីណា៎លីគា! 🐮🌾</div>
-        </div>
+        <div class="menu-btn active" onclick="switchGame(0, this)">🌾 ស៊ីស្មៅ</div>
+        <div class="menu-btn" onclick="switchGame(1, this)">🚜 គេចត្រាក់ទ័រ</div>
+        <div class="menu-btn" onclick="switchGame(2, this)">⛈️ គេចផ្លេកបន្ទោរ</div>
+        <div class="menu-btn" onclick="switchGame(3, this)">🍎 ប្រមូលប៉ោម</div>
     </div>
 
     <div id="main-stage">
@@ -265,7 +252,7 @@
                 <span class="status-badge" id="timer-display">Time: 20.0s</span>
             </div>
             
-            <canvas id="arcCanvas" width="500" height="450"></canvas>
+            <canvas id="arcCanvas" width="440" height="400"></canvas>
 
             <div id="intro-screen" class="overlay-screen show">
                 <div class="intro-title">🐮 Happy Cow Farm 🌾</div>
@@ -290,10 +277,9 @@
     const introScreen = document.getElementById("intro-screen");
     const popup = document.getElementById("screen-popup");
     const popupText = document.getElementById("popup-content-text");
-    const motText = document.getElementById("motivation-text");
 
     let currentGameIndex = 0;
-    let mouseX = 250, mouseY = 225;
+    let cowX = 220, cowY = 200; // Position handles touch inputs directly
     let timeRemaining = 20.0; 
     let lastTime = Date.now();
     let isGameOver = true; 
@@ -305,15 +291,31 @@
         "🎉 រស់បាន ២០ វិនាទីបាត់! កូនគោលីគាខ្លាំងគ្រាន់បើដែរតើ មិនអន់ទេវើយ! 😎"
     ];
 
-    // FIXED EXACTLY ONE COMFORTING SENTENCE USING "anh"
     const burnoutPhrase = "❤️ មិនអីទេលីគាសម្លាញ់ បើហត់នឿយនឹងមនុស្សជុំវិញខ្លួន ឬពិភពលោកខាងក្រៅពេក ត្រលប់មកសម្រាកក្នុងពិភពតូចមួយនេះសិនមកណា មិត្តម្នាក់នេះនៅក្បែរការពារលីគាជានិច្ច! 🌸";
 
-    canvas.addEventListener("mousemove", (e) => {
+    // UNIVERSAL POSITION UPDATER FOR MOBILE TOUCH INPUTS
+    function handleTouchInput(e) {
         if (isGameOver) return;
+        e.preventDefault(); // Lock iOS scrolling/bounce behavior completely inside canvas
+        
         const rect = canvas.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
-    });
+        const touch = e.touches[0];
+        
+        // Calculate the exact scaling factor if the canvas shrunk on mobile screens
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        // Set local coordinates bounds
+        let targetX = (touch.clientX - rect.left) * scaleX;
+        let targetY = (touch.clientY - rect.top) * scaleY;
+
+        // Constraint within canvas boundaries
+        if (targetX >= 0 && targetX <= canvas.width) cowX = targetX;
+        if (targetY >= 0 && targetY <= canvas.height) cowY = targetY;
+    }
+
+    canvas.addEventListener("touchstart", handleTouchInput, { passive: false });
+    canvas.addEventListener("touchmove", handleTouchInput, { passive: false });
 
     function closeIntro() {
         introScreen.classList.remove("show");
@@ -322,16 +324,13 @@
 
     function triggerWin() {
         isGameOver = true;
-        const phrase = jeaPhrases[Math.floor(Math.random() * jeaPhrases.length)];
-        popupText.innerText = phrase;
-        motText.innerText = phrase;
+        popupText.innerText = jeaPhrases[Math.floor(Math.random() * jeaPhrases.length)];
         popup.classList.add("show", "win-style");
     }
 
     function triggerLoss() {
         isGameOver = true;
         popupText.innerText = burnoutPhrase;
-        motText.innerText = burnoutPhrase;
         popup.classList.add("show");
         popup.classList.remove("win-style");
     }
@@ -343,7 +342,6 @@
         entities = [];
         spawnTimer = 0;
         popup.classList.remove("show");
-        motText.innerText = "ជួយកូនគោរកចំណី និងរស់ឱ្យបាន ២០ វិនាទីណា៎! 🐮";
     }
 
     function switchGame(index, btnElement) {
@@ -361,32 +359,26 @@
     }
 
     function drawCuteCow(x, y) {
-        // Body (Slightly larger area to stay clear of hits easily)
-        ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.ellipse(x, y, 28, 22, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.ellipse(x, y, 26, 20, 0, 0, Math.PI*2); ctx.fill();
         ctx.strokeStyle = "#eedec9"; ctx.lineWidth = 2; ctx.stroke();
-        // Black spots
         ctx.fillStyle = "#2f3542";
-        ctx.beginPath(); ctx.arc(x - 10, y - 8, 8, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); ctx.arc(x + 12, y + 5, 6, 0, Math.PI*2); ctx.fill();
-        // Head
-        ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(x - 22, y - 12, 14, 0, Math.PI*2); ctx.fill();
-        // Snout
-        ctx.fillStyle = "#ffb8b8"; ctx.beginPath(); ctx.ellipse(x - 26, y - 8, 10, 7, 0, 0, Math.PI*2); ctx.fill();
-        // Eyes
-        ctx.fillStyle = "#000000"; ctx.beginPath(); ctx.arc(x - 26, y - 15, 2, 0, Math.PI*2); ctx.fill();
-        // Cute Horns
+        ctx.beginPath(); ctx.arc(x - 8, y - 6, 7, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x + 10, y + 4, 5, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(x - 20, y - 10, 13, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#ffb8b8"; ctx.beginPath(); ctx.ellipse(x - 24, y - 6, 9, 6, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#000000"; ctx.beginPath(); ctx.arc(x - 24, y - 12, 2, 0, Math.PI*2); ctx.fill();
         ctx.fillStyle = "#f1bbc1";
-        ctx.beginPath(); ctx.moveTo(x - 20, y - 24); ctx.lineTo(x - 24, y - 32); ctx.lineTo(x - 16, y - 24); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x - 18, y - 22); ctx.lineTo(x - 22, y - 29); ctx.lineTo(x - 14, y - 22); ctx.fill();
     }
 
     function gameLoop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         ctx.fillStyle = "#eaf7ee";
-        for(let i=0; i<10; i++) {
-            let gx = (i * 75) % canvas.width;
-            let gy = (i * 110) % canvas.height;
-            ctx.fillStyle = "#badc58"; ctx.fillRect(gx, gy, 6, 4); ctx.fillRect(gx+3, gy-2, 2, 6);
+        for(let i=0; i<8; i++) {
+            let gx = (i * 85) % canvas.width;
+            let gy = (i * 120) % canvas.height;
+            ctx.fillStyle = "#badc58"; ctx.fillRect(gx, gy, 6, 4);
         }
 
         if (!isGameOver) {
@@ -407,75 +399,66 @@
         timerDisplay.innerText = "Time: " + timeRemaining.toFixed(1) + "s";
 
         if(!introScreen.classList.contains("show")) {
-            drawCuteCow(mouseX, mouseY);
+            drawCuteCow(cowX, cowY);
         }
 
-        // BALANCED GAME 0: SLOW OBSTACLES & SPAWN RATE
+        // CHILL MODE EASY TOUCH LOGICS
         if (currentGameIndex === 0) {
-            // Lowered spawn frequency from 12 to 35
             if (!isGameOver && spawnTimer % 35 === 0) {
-                entities.push({ x: Math.random() * (canvas.width - 40) + 20, y: 0, speed: 1.8 + Math.random()*1.2 }); // Slow speed
+                entities.push({ x: Math.random() * (canvas.width - 40) + 20, y: 0, speed: 1.8 + Math.random()*1.0 });
             }
             for (let i = entities.length - 1; i >= 0; i--) {
                 let g = entities[i]; if(!isGameOver) g.y += g.speed;
                 ctx.fillStyle = "#ff4757"; ctx.beginPath(); ctx.arc(g.x, g.y, 10, 0, Math.PI*2); ctx.fill();
                 ctx.fillStyle = "#ffa502"; ctx.beginPath(); ctx.arc(g.x, g.y, 4, 0, Math.PI*2); ctx.fill();
 
-                // Fair collision bounds
-                if (Math.hypot(mouseX - g.x, mouseY - g.y) < 25) triggerLoss();
+                if (Math.hypot(cowX - g.x, cowY - g.y) < 24) triggerLoss();
                 if (g.y > canvas.height) entities.splice(i, 1);
             }
         }
 
-        // BALANCED GAME 1: TRACTOR DODER
         else if (currentGameIndex === 1) {
-            // Lowered spawn frequency from 22 to 45
             if (!isGameOver && spawnTimer % 45 === 0) {
-                entities.push({ x: canvas.width, y: Math.random() * (canvas.height - 80) + 40, speed: 2.2 }); // Relaxed speed
+                entities.push({ x: canvas.width, y: Math.random() * (canvas.height - 80) + 40, speed: 2.0 });
             }
             for (let i = entities.length - 1; i >= 0; i--) {
                 let t = entities[i]; if(!isGameOver) t.x -= t.speed;
-                ctx.fillStyle = "#ffa502"; ctx.fillRect(t.x, t.y, 45, 25);
-                ctx.fillStyle = "#2f3542"; ctx.beginPath(); ctx.arc(t.x+10, t.y+25, 8, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(t.x+35, t.y+25, 8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#ffa502"; ctx.fillRect(t.x, t.y, 42, 22);
+                ctx.fillStyle = "#2f3542"; ctx.beginPath(); ctx.arc(t.x+10, t.y+22, 6, 0, Math.PI*2); ctx.fill();
 
-                if (mouseX + 20 > t.x && mouseX - 20 < t.x + 45 && mouseY + 15 > t.y && mouseY - 15 < t.y + 25) triggerLoss();
+                if (cowX + 18 > t.x && cowX - 18 < t.x + 42 && cowY + 14 > t.y && cowY - 14 < t.y + 22) triggerLoss();
                 if (t.x + 50 < 0) entities.splice(i, 1);
             }
         }
 
-        // BALANCED GAME 2: STORM SHELTER RUN
         else if (currentGameIndex === 2) {
-            // Lowered spawn frequency from 14 to 38
             if (!isGameOver && spawnTimer % 38 === 0) {
-                entities.push({ x: Math.random() * canvas.width, y: 0, speed: 2.5 }); // Balanced speed
+                entities.push({ x: Math.random() * canvas.width, y: 0, speed: 2.4 });
             }
             for (let i = entities.length - 1; i >= 0; i--) {
                 let l = entities[i]; if(!isGameOver) l.y += l.speed;
                 ctx.fillStyle = "#eccc68"; ctx.beginPath();
-                ctx.moveTo(l.x, l.y); ctx.lineTo(l.x-8, l.y+15); ctx.lineTo(l.x+2, l.y+15); ctx.lineTo(l.x-4, l.y+28); ctx.fill();
+                ctx.moveTo(l.x, l.y); ctx.lineTo(l.x-6, l.y+12); ctx.lineTo(l.x+2, l.y+12); ctx.lineTo(l.x-3, l.y+22); ctx.fill();
 
-                if (Math.hypot(mouseX - l.x, mouseY - l.y) < 24) triggerLoss();
+                if (Math.hypot(cowX - l.x, cowY - l.y) < 23) triggerLoss();
                 if (l.y > canvas.height) entities.splice(i, 1);
             }
         }
 
-        // BALANCED GAME 3: APPLE COLLECTOR (Generous catch area!)
         else if (currentGameIndex === 3) {
             if (!isGameOver && spawnTimer % 35 === 0) {
-                entities.push({ x: Math.random() * (canvas.width - 40) + 20, y: 0, speed: 1.5 }); // Falling very slowly
+                entities.push({ x: Math.random() * (canvas.width - 40) + 20, y: 0, speed: 1.4 });
             }
             for (let i = entities.length - 1; i >= 0; i--) {
                 let a = entities[i]; if(!isGameOver) a.y += a.speed;
-                ctx.fillStyle = "#ff6b81"; ctx.beginPath(); ctx.arc(a.x, a.y, 11, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "#2ed573"; ctx.fillRect(a.x-1, a.y-14, 2, 4);
+                ctx.fillStyle = "#ff6b81"; ctx.beginPath(); ctx.arc(a.x, a.y, 10, 0, Math.PI*2); ctx.fill();
 
-                let dist = Math.hypot(mouseX - a.x, mouseY - a.y);
-                if (dist < 60 && !isGameOver) { // Increased magnet range from 45 to 60!
+                let dist = Math.hypot(cowX - a.x, cowY - a.y);
+                if (dist < 58 && !isGameOver) { 
                     entities.splice(i, 1);
                     continue;
                 }
-                if (a.y > canvas.height - 20) triggerLoss();
+                if (a.y > canvas.height - 15) triggerLoss();
             }
         }
 
@@ -486,3 +469,4 @@
 </script>
 </body>
 </html>
+    
