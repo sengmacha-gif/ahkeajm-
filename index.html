@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Likea's Happy Cow Farm (Easy & Chill Mode) 🐮</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&family=Fredoka:wght@400;700&display=swap');
+
+        :root {
+            --farm-green: #7bed9f;
+            --farm-bg: #eef9f2;
+            --sky-blue: #70a1ff;
+            --text-dark: #2f3542;
+            --panel-white: rgba(255, 255, 255, 0.95);
+            --shadow: 0 8px 24px rgba(46, 213, 115, 0.15);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Kantumruy Pro', sans-serif; 
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e8f7ee 0%, #dff9fb 100%);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            color: var(--text-dark);
+        }
+
+        /* SIDEBAR INTERFACE */
+        #sidebar {
+            width: 320px;
+            background: var(--panel-white);
+            border-right: 4px solid #fff;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            z-index: 10;
+        }
+
+        .brand { text-align: center; margin-bottom: 25px; }
+        .brand h1 { 
+            font-family: 'Fredoka', sans-serif;
+            font-size: 24px; 
+            color: #2ed573; 
+            margin: 0; 
+        }
+        .brand span { font-size: 11px; color: #a4b0be; letter-spacing: 1px; text-transform: uppercase; }
+
+        .menu-btn {
+            background: #fff;
+            border: 2px solid #f1f2f6;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #57606f;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover { border-color: #2ed573; color: #2ed573; transform: translateX(5px); }
+        .menu-btn.active {
+            background: #2ed573;
+            color: white;
+            border-color: #2ed573;
+            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.3);
+        }
+
+        /* SIDEBAR CHAT BOX */
+        #motivation-box {
+            margin-top: auto;
+            background: #f1fcf5;
+            border: 2px dashed #2ed573;
+            border-radius: 16px;
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        #motivation-box h3 { margin: 0 0 8px 0; color: #2ed573; font-size: 16px; }
+
+        /* MAIN GAMING STAGE */
+        #main-stage {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #game-card {
+            background: var(--panel-white);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 6px solid #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .game-title { font-size: 20px; font-weight: bold; color: #2c3e50; margin: 0; }
+        .status-badge {
+            background: #ffa502;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        canvas {
+            background: #f7fcf9;
+            border-radius: 16px;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.03);
+            cursor: pointer;
+        }
+
+        /* INTRO SCREEN & OVERLAY SYSTEM */
+        .overlay-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 20;
+            padding: 35px;
+        }
+
+        .overlay-screen.show { 
+            opacity: 1; 
+            pointer-events: auto; 
+        }
+
+        .intro-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 28px;
+            color: #2ed573;
+            margin-bottom: 10px;
+        }
+
+        .intro-hi {
+            background: #e8f7ee;
+            color: #2ed573;
+            padding: 15px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(46, 213, 115, 0.3);
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            max-width: 85%;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .message-content {
+            background: #ff4757;
+            color: #fff;
+            padding: 18px 25px;
+            border-radius: 16px;
+            border: 3px solid #fff;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+            max-width: 85%;
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.2);
+            line-height: 1.5;
+        }
+
+        .overlay-screen.win-style {
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .overlay-screen.win-style .message-content {
+            background: #2ed573;
+            box-shadow: 0 8px 20px rgba(46, 213, 115, 0.2);
+        }
+
+        .start-btn {
+            background: #2ed573;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
+            transition: transform 0.2s;
+        }
+        .start-btn:hover { transform: scale(1.05); }
+
+        .restart-btn {
+            margin-top: 20px;
+            background: #2f3542;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+            transition: transform 0.2s;
+        }
+        .restart-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <div class="brand">
+            <h1>COW FARM 🐮</h1>
+            <span>For Likea 🌸</span>
+        </div>
+
+        <div class="menu-btn active" onclick="switchGame(0, this)">
+            <span>🌾</span> ហ្គេមគោរត់រកស៊ីស្មៅ
+        </div>
+        <div class="menu-btn" onclick="switchGame(1, this)">
+            <span>🚜</span> ហ្គេមគោគេចត្រាក់ទ័រ
+        </div>
+        <div class="menu-btn" onclick="switchGame(2, this)">
+            <span>⛈️</span> ហ្គេមគោរត់រកជម្រកភ្លៀង
+        </div>
+        <div class="menu-btn" onclick="switchGame(3, this)">
+            <span>🍎</span> ហ្គេមប្រមូលផ្លែប៉ោមក្រហម
+        </div>
+
+        <div id="motivation-box">
+            <h3>💬 ស្ថានភាព៖</h3>
+            <div id="motivation-text">នាំកូនគោរស់ឱ្យបាន ២០ វិនាទីណា៎លីគា! 🐮🌾</div>
+        </div>
+    </div>
+
+    <div id="main-stage">
+        <div id="game-card">
+            <div class="game-header">
+                <span class="game-title" id="current-title">Cow Grass Finder</span>
+                <span class="status-badge" id="timer-display">Time: 20.0s</span>
+            </div>
+            
+            <canvas id="arcCanvas" width="500" height="450"></canvas>
+
+            <div id="intro-screen" class="overlay-screen show">
+                <div class="intro-title">🐮 Happy Cow Farm 🌾</div>
+                <div class="intro-hi">
+                    សួស្តីលីគាអាល្អិត! ស៊ូៗណា៎លេងហ្គេមកូនគោនេះឱ្យឈ្នះ ២០ វិនាទីទៅ! មើលទៅឯងដើរយឺតជាងកូនគោហ្នឹងទៀតអាកាតឿអើយ ឌឺមួយមើល! 🤪 លេងចាញ់កុំយំឱ្យ anh លួងណា៎!
+                </div>
+                <button class="start-btn" onclick="closeIntro()">START GAME 🚀</button>
+            </div>
+
+            <div id="screen-popup" class="overlay-screen">
+                <div class="message-content" id="popup-content-text">...</div>
+                <button class="restart-btn" onclick="restartGame()">👉 លេងម្តងទៀត 👈</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const canvas = document.getElementById("arcCanvas");
+    const ctx = canvas.getContext("2d");
+    const timerDisplay = document.getElementById("timer-display");
+    const currentTitle = document.getElementById("current-title");
+    const introScreen = document.getElementById("intro-screen");
+    const popup = document.getElementById("screen-popup");
+    const popupText = document.getElementById("popup-content-text");
+    const motText = document.getElementById("motivation-text");
+
+    let currentGameIndex = 0;
+    let mouseX = 250, mouseY = 225;
+    let timeRemaining = 20.0; 
+    let lastTime = Date.now();
+    let isGameOver = true; 
+    let spawnTimer = 0;
+    let entities = [];
+
+    const jeaPhrases = [
+        "🎉 អូហូ! ឈ្នះបាត់ទៅហើយ! ឌឺសាហាវណាស់មេ បញ្ជាកូនគោស៊ីស្មៅលឿនដូចរន្ទះចឹង! 🐮🌾",
+        "🎉 រស់បាន ២០ វិនាទីបាត់! កូនគោលីគាខ្លាំងគ្រាន់បើដែរតើ មិនអន់ទេវើយ! 😎"
+    ];
+
+    // FIXED EXACTLY ONE COMFORTING SENTENCE USING "anh"
+    const burnoutPhrase = "❤️ មិនអីទេលីគាសម្លាញ់ បើហត់នឿយនឹងមនុស្សជុំវិញខ្លួន ឬពិភពលោកខាងក្រៅពេក ត្រលប់មកសម្រាកក្នុងពិភពតូចមួយនេះសិនមកណា មិត្តម្នាក់នេះនៅក្បែរការពារលីគាជានិច្ច! 🌸";
+
+    canvas.addEventListener("mousemove", (e) => {
+        if (isGameOver) return;
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+    });
+
+    function closeIntro() {
+        introScreen.classList.remove("show");
+        restartGame();
+    }
+
+    function triggerWin() {
+        isGameOver = true;
+        const phrase = jeaPhrases[Math.floor(Math.random() * jeaPhrases.length)];
+        popupText.innerText = phrase;
+        motText.innerText = phrase;
+        popup.classList.add("show", "win-style");
+    }
+
+    function triggerLoss() {
+        isGameOver = true;
+        popupText.innerText = burnoutPhrase;
+        motText.innerText = burnoutPhrase;
+        popup.classList.add("show");
+        popup.classList.remove("win-style");
+    }
+
+    function restartGame() {
+        isGameOver = false;
+        timeRemaining = 20.0;
+        lastTime = Date.now();
+        entities = [];
+        spawnTimer = 0;
+        popup.classList.remove("show");
+        motText.innerText = "ជួយកូនគោរកចំណី និងរស់ឱ្យបាន ២០ វិនាទីណា៎! 🐮";
+    }
+
+    function switchGame(index, btnElement) {
+        document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        currentGameIndex = index;
+
+        if (index === 0) currentTitle.innerText = "Cow Grass Finder";
+        else if (index === 1) currentTitle.innerText = "Tractor Dodger";
+        else if (index === 2) currentTitle.innerText = "Storm Shelter Run";
+        else if (index === 3) currentTitle.innerText = "Apple Collector";
+
+        introScreen.classList.remove("show");
+        restartGame();
+    }
+
+    function drawCuteCow(x, y) {
+        // Body (Slightly larger area to stay clear of hits easily)
+        ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.ellipse(x, y, 28, 22, 0, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = "#eedec9"; ctx.lineWidth = 2; ctx.stroke();
+        // Black spots
+        ctx.fillStyle = "#2f3542";
+        ctx.beginPath(); ctx.arc(x - 10, y - 8, 8, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x + 12, y + 5, 6, 0, Math.PI*2); ctx.fill();
+        // Head
+        ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(x - 22, y - 12, 14, 0, Math.PI*2); ctx.fill();
+        // Snout
+        ctx.fillStyle = "#ffb8b8"; ctx.beginPath(); ctx.ellipse(x - 26, y - 8, 10, 7, 0, 0, Math.PI*2); ctx.fill();
+        // Eyes
+        ctx.fillStyle = "#000000"; ctx.beginPath(); ctx.arc(x - 26, y - 15, 2, 0, Math.PI*2); ctx.fill();
+        // Cute Horns
+        ctx.fillStyle = "#f1bbc1";
+        ctx.beginPath(); ctx.moveTo(x - 20, y - 24); ctx.lineTo(x - 24, y - 32); ctx.lineTo(x - 16, y - 24); ctx.fill();
+    }
+
+    function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = "#eaf7ee";
+        for(let i=0; i<10; i++) {
+            let gx = (i * 75) % canvas.width;
+            let gy = (i * 110) % canvas.height;
+            ctx.fillStyle = "#badc58"; ctx.fillRect(gx, gy, 6, 4); ctx.fillRect(gx+3, gy-2, 2, 6);
+        }
+
+        if (!isGameOver) {
+            let now = Date.now();
+            let delta = (now - lastTime) / 1000;
+            lastTime = now;
+            timeRemaining -= delta;
+
+            if (timeRemaining <= 0) {
+                timeRemaining = 0;
+                triggerWin();
+            }
+            spawnTimer++;
+        } else {
+            lastTime = Date.now();
+        }
+
+        timerDisplay.innerText = "Time: " + timeRemaining.toFixed(1) + "s";
+
+        if(!introScreen.classList.contains("show")) {
+            drawCuteCow(mouseX, mouseY);
+        }
+
+        // BALANCED GAME 0: SLOW OBSTACLES & SPAWN RATE
+        if (currentGameIndex === 0) {
+            // Lowered spawn frequency from 12 to 35
+            if (!isGameOver && spawnTimer % 35 === 0) {
+                entities.push({ x: Math.random() * (canvas.width - 40) + 20, y: 0, speed: 1.8 + Math.random()*1.2 }); // Slow speed
+            }
+            for (let i = entities.length - 1; i >= 0; i--) {
+                let g = entities[i]; if(!isGameOver) g.y += g.speed;
+                ctx.fillStyle = "#ff4757"; ctx.beginPath(); ctx.arc(g.x, g.y, 10, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#ffa502"; ctx.beginPath(); ctx.arc(g.x, g.y, 4, 0, Math.PI*2); ctx.fill();
+
+                // Fair collision bounds
+                if (Math.hypot(mouseX - g.x, mouseY - g.y) < 25) triggerLoss();
+                if (g.y > canvas.height) entities.splice(i, 1);
+            }
+        }
+
+        // BALANCED GAME 1: TRACTOR DODER
+        else if (currentGameIndex === 1) {
+            // Lowered spawn frequency from 22 to 45
+            if (!isGameOver && spawnTimer % 45 === 0) {
+                entities.push({ x: canvas.width, y: Math.random() * (canvas.height - 80) + 40, speed: 2.2 }); // Relaxed speed
+            }
+            for (let i = entities.length - 1; i >= 0; i--) {
+                let t = entities[i]; if(!isGameOver) t.x -= t.speed;
+                ctx.fillStyle = "#ffa502"; ctx.fillRect(t.x, t.y, 45, 25);
+                ctx.fillStyle = "#2f3542"; ctx.beginPath(); ctx.arc(t.x+10, t.y+25, 8, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(t.x+35, t.y+25, 8, 0, Math.PI*2); ctx.fill();
+
+                if (mouseX + 20 > t.x && mouseX - 20 < t.x + 45 && mouseY + 15 > t.y && mouseY - 15 < t.y + 25) triggerLoss();
+                if (t.x + 50 < 0) entities.splice(i, 1);
+            }
+        }
+
+        // BALANCED GAME 2: STORM SHELTER RUN
+        else if (currentGameIndex === 2) {
+            // Lowered spawn frequency from 14 to 38
+            if (!isGameOver && spawnTimer % 38 === 0) {
+                entities.push({ x: Math.random() * canvas.width, y: 0, speed: 2.5 }); // Balanced speed
+            }
+            for (let i = entities.length - 1; i >= 0; i--) {
+                let l = entities[i]; if(!isGameOver) l.y += l.speed;
+                ctx.fillStyle = "#eccc68"; ctx.beginPath();
+                ctx.moveTo(l.x, l.y); ctx.lineTo(l.x-8, l.y+15); ctx.lineTo(l.x+2, l.y+15); ctx.lineTo(l.x-4, l.y+28); ctx.fill();
+
+                if (Math.hypot(mouseX - l.x, mouseY - l.y) < 24) triggerLoss();
+                if (l.y > canvas.height) entities.splice(i, 1);
+            }
+        }
+
+        // BALANCED GAME 3: APPLE COLLECTOR (Generous catch area!)
+        else if (currentGameIndex === 3) {
+            if (!isGameOver && spawnTimer % 35 === 0) {
+                entities.push({ x: Math.random() * (canvas.width - 40) + 20, y: 0, speed: 1.5 }); // Falling very slowly
+            }
+            for (let i = entities.length - 1; i >= 0; i--) {
+                let a = entities[i]; if(!isGameOver) a.y += a.speed;
+                ctx.fillStyle = "#ff6b81"; ctx.beginPath(); ctx.arc(a.x, a.y, 11, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#2ed573"; ctx.fillRect(a.x-1, a.y-14, 2, 4);
+
+                let dist = Math.hypot(mouseX - a.x, mouseY - a.y);
+                if (dist < 60 && !isGameOver) { // Increased magnet range from 45 to 60!
+                    entities.splice(i, 1);
+                    continue;
+                }
+                if (a.y > canvas.height - 20) triggerLoss();
+            }
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+</script>
+</body>
+</html>
